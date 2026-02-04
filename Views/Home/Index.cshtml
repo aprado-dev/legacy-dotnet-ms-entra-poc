@@ -1,0 +1,41 @@
+@using System.Security.Claims
+@{
+    ViewBag.Title = "Bem-vindo";
+}
+
+<div class="welcome-section">
+    <h2>@ViewBag.Message</h2>
+    <p>Esta é uma aplicação de demonstração ASP.NET MVC usando o .NET Framework 4.8.</p>
+
+    @if (Request.IsAuthenticated)
+    {
+        var claimsIdentity = User.Identity as ClaimsIdentity;
+        <div class="claims-section">
+            <h3>Suas Claims</h3>
+            <table class="claims-table">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in claimsIdentity.Claims)
+                    {
+                        <tr>
+                            <td>@claim.Type.Split('/').Last()</td>
+                            <td>@claim.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="login-section">
+            <p>Faça login para ver suas claims do Microsoft Entra ID.</p>
+            <a href="@Url.Action("SignIn", "Account")" class="btn-login-large">Entrar com Microsoft Entra ID</a>
+        </div>
+    }
+</div>

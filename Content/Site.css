@@ -1,0 +1,174 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: #0078d4;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    border-radius: 5px;
+}
+
+header h1 {
+    font-size: 1.8em;
+    font-weight: 300;
+}
+
+.user-nav {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.btn-logout,
+.btn-login {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+
+.btn-logout {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-logout:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-login {
+    background-color: white;
+    color: #0078d4;
+}
+
+.btn-login:hover {
+    background-color: #f0f0f0;
+}
+
+main {
+    background-color: white;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-height: 300px;
+}
+
+.welcome-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.welcome-section h2 {
+    color: #0078d4;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+.welcome-section p {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Claims Section */
+.claims-section {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.claims-section h3 {
+    color: #0078d4;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.claims-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+.claims-table th,
+.claims-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.claims-table th {
+    background-color: #0078d4;
+    color: white;
+    font-weight: 500;
+}
+
+.claims-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.claims-table td:first-child {
+    font-weight: 500;
+    color: #555;
+    width: 30%;
+}
+
+.claims-table td:last-child {
+    word-break: break-all;
+}
+
+/* Login Section */
+.login-section {
+    margin-top: 30px;
+}
+
+.btn-login-large {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #0078d4;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.btn-login-large:hover {
+    background-color: #005a9e;
+}
