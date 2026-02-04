@@ -4,7 +4,7 @@ using Microsoft.Owin.Security.OpenIdConnect;
 using System.Web;
 using System.Web.Mvc;
 
-namespace MvcDemo.Controllers
+namespace MSEntraPOC.Controllers
 {
     public class AccountController : Controller
     {
