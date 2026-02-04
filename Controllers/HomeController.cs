@@ -6,7 +6,7 @@ namespace MvcDemo.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Bem-vindo ao MVC Demo!";
+            ViewBag.Message = "Bem-vindo ao MS Entra POC!";
             return View();
         }
     }
