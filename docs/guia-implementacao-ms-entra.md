@@ -11,6 +11,93 @@ Este guia documenta o passo a passo para implementar autenticação SSO com Micr
 
 ---
 
+## Padrão de Autenticação e Versão do Framework (.NET)
+
+### Matriz de Compatibilidade e Requisitos
+
+| Status | Versão do .NET Framework | Veredito |
+|--------|--------------------------|---------|
+| **Recomendado** | 4.7.2 ou 4.8 | Padrão ideal para segurança, conformidade e estabilidade. |
+| **Mínimo Suportado** | 4.6.2 | Aceitável com restrições e necessidade de mitigação manual de vulnerabilidades. |
+| **Não Suportado** | 4.6.1 ou inferior | Proibido. Risco alto de segurança e incompatibilidade com protocolos modernos. |
+
+### Justificativa Técnica das Decisões
+
+#### Por que versões abaixo da 4.6.2 são proibidas?
+
+A utilização de versões anteriores à 4.6.2 (ex: 4.5, 4.5.2) inviabiliza o uso da biblioteca de autenticação moderna (MSAL.NET), forçando o uso de tecnologias obsoletas:
+
+- **Fim do Suporte da ADAL**: Versões antigas dependeriam da Active Directory Authentication Library (ADAL), cujo suporte foi encerrado pela Microsoft em junho de 2023 (End of Life). O uso desta biblioteca em produção constitui uma não conformidade de segurança (High Risk Finding).
+- **Incompatibilidade de TLS**: O Microsoft Entra ID (Azure AD) exige conexões via TLS 1.2. Versões antigas do framework não negociam este protocolo nativamente, exigindo intervenções manuais no código (`ServicePointManager`) que são propensas a falhas humanas e interrupções de serviço.
+
+#### Por que a versão 4.6.2 é o "Mínimo Suportado" (com ressalvas)?
+
+A versão 4.6.2 é a base mínima para executar a biblioteca atual `Microsoft.Identity.Client` (MSAL). No entanto, ela apresenta desafios de manutenção:
+
+- **Vulnerabilidades de Dependência**: O ecossistema de pacotes NuGet compatível com 4.6.2 frequentemente alerta para vulnerabilidades nas bibliotecas de tokens (`System.IdentityModel.Tokens.Jwt` série 5.x). A mitigação exige o forçamento manual de pacotes para versões mais recentes (série 6.x), aumentando a complexidade de gestão de dependências.
+
+#### Por que a versão 4.7.2+ é a Recomendada?
+
+A atualização para o .NET Framework 4.7.2 ou 4.8 elimina dívidas técnicas críticas:
+
+- **Suporte Nativo ao .NET Standard 2.0**: Permite o uso transparente das versões mais seguras e recentes das bibliotecas de identidade e criptografia, sem conflitos de DLLs.
+- **Criptografia Robusta**: O sistema operacional gerencia a negociação de protocolos de segurança (TLS 1.2/1.3) automaticamente, garantindo conformidade imediata com as políticas de segurança do Microsoft Entra ID.
+
+---
+
+## Requisitos Específicos para .NET Framework 4.6.2
+
+Ao utilizar o .NET Framework 4.6.2 como target, é necessário observar as seguintes restrições em relação às dependências:
+
+### Versões dos Pacotes Microsoft.IdentityModel
+
+Os pacotes `Microsoft.IdentityModel.*` na série **8.x** exigem .NET Framework 4.7.2 ou superior. Para o 4.6.2, é obrigatório utilizar a série **5.3.0**, que suporta `net461`:
+
+| Pacote | Versão Compatível (4.6.2) | Versão Incompatível |
+|--------|---------------------------|---------------------|
+| `Microsoft.IdentityModel.Tokens` | 5.3.0 | 8.x (requer net472) |
+| `Microsoft.IdentityModel.Logging` | 5.3.0 | 8.x (requer net472) |
+| `Microsoft.IdentityModel.Protocols` | 5.3.0 | 8.x (requer net472) |
+| `Microsoft.IdentityModel.Protocols.OpenIdConnect` | 5.3.0 | 8.x (requer net472) |
+| `System.IdentityModel.Tokens.Jwt` | 5.3.0 | 8.x (requer net472) |
+
+> **Atenção**: O pacote `Microsoft.IdentityModel.Abstractions` não existe na série 5.x e **não deve ser referenciado** ao usar o 4.6.2.
+
+### Binding Redirects no Web.config
+
+Os binding redirects devem apontar para a versão **5.3.0.0** (e não 8.15.0.0):
+
+```xml
+<dependentAssembly>
+    <assemblyIdentity name="Microsoft.IdentityModel.Tokens" publicKeyToken="31bf3856ad364e35" culture="neutral"/>
+    <bindingRedirect oldVersion="0.0.0.0-5.3.0.0" newVersion="5.3.0.0"/>
+</dependentAssembly>
+<dependentAssembly>
+    <assemblyIdentity name="Microsoft.IdentityModel.Logging" publicKeyToken="31bf3856ad364e35" culture="neutral"/>
+    <bindingRedirect oldVersion="0.0.0.0-5.3.0.0" newVersion="5.3.0.0"/>
+</dependentAssembly>
+```
+
+### TLS 1.2 Obrigatório
+
+No .NET Framework 4.6.2, o TLS 1.2 **não é o protocolo padrão**. É necessário forçá-lo explicitamente no `Startup.cs`:
+
+```csharp
+ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+```
+
+> No .NET Framework 4.7+ o TLS 1.2 é negociado automaticamente pelo sistema operacional, tornando essa linha desnecessária (embora inofensiva).
+
+### Vulnerabilidades Conhecidas
+
+Os pacotes da série 5.3.0 possuem vulnerabilidades de severidade moderada reportadas pelo NuGet (`GHSA-59j7-ghrg-fj52`). Para ambientes de produção, considere:
+
+1. Migrar para .NET Framework 4.7.2+ para utilizar pacotes da série 6.x/8.x
+2. Avaliar o risco da vulnerabilidade no contexto da sua aplicação
+3. Aplicar controles compensatórios de segurança na camada de infraestrutura
+
+---
+
 ## Passo 1: Registrar a Aplicação no Microsoft Entra ID
 
 ### 1.1 Criar o App Registration

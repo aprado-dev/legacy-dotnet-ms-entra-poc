@@ -85,3 +85,7 @@ msbuild*.err
 
 # Config with secrets
 Web.config
+
+# Misc
+nul
+nuget.exe

@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("MS Entra POC")]
-[assembly: AssemblyDescription("POC MS Entra - .NET Framework 4.8")]
+[assembly: AssemblyDescription("POC MS Entra - .NET Framework 4.6.2")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MS Entra POC")]

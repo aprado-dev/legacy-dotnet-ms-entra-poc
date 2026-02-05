@@ -1,15 +1,15 @@
-# POC MS Entra - .NET Framework 4.8
+# POC MS Entra - .NET Framework 4.6.2
 
 ## Sobre
 
 Este é um **Proof of Concept (POC)** para avaliar e aprender a integração com o **Microsoft Entra ID** (antigo Azure AD).
 
-O objetivo é demonstrar como aplicações legadas baseadas em **.NET Framework 4.8** podem implementar autenticação SSO usando o MS Entra.
+O objetivo é demonstrar como aplicações legadas baseadas em **.NET Framework 4.6.2** podem implementar autenticação SSO usando o MS Entra.
 
 ## Tecnologias
 
 - ASP.NET MVC 5
-- .NET Framework 4.8
+- .NET Framework 4.6.2
 - Microsoft Entra ID (Azure AD)
 - OWIN/Katana
 
