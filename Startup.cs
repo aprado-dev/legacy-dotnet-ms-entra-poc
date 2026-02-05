@@ -8,9 +8,9 @@ using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 
-[assembly: OwinStartup(typeof(MvcDemo.Startup))]
+[assembly: OwinStartup(typeof(MSEntraPOC.Startup))]
 
-namespace MvcDemo
+namespace MSEntraPOC
 {
     public class Startup
     {

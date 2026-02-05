@@ -23,7 +23,7 @@
     <add key="ida:ClientSecret" value="YOUR_CLIENT_SECRET" />
     <add key="ida:RedirectUri" value="https://localhost:44300/signin-oidc" />
     <add key="ida:PostLogoutRedirectUri" value="https://localhost:44300/" />
-    <add key="owin:AppStartup" value="MvcDemo.Startup" />
+    <add key="owin:AppStartup" value="MSEntraPOC.Startup" />
   </appSettings>
   <system.web>
     <globalization culture="pt-BR" uiCulture="pt-BR" requestEncoding="utf-8" responseEncoding="utf-8" fileEncoding="utf-8" />

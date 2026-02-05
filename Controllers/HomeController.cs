@@ -1,12 +1,12 @@
 using System.Web.Mvc;
 
-namespace MvcDemo.Controllers
+namespace MSEntraPOC.Controllers
 {
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Bem-vindo ao MVC Demo!";
+            ViewBag.Message = "Bem-vindo ao POC MS Entra!";
             return View();
         }
     }

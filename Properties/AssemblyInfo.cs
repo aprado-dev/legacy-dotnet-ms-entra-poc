@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("MvcDemo")]
-[assembly: AssemblyDescription("Aplicação MVC Demo")]
+[assembly: AssemblyTitle("MS Entra POC")]
+[assembly: AssemblyDescription("POC MS Entra - .NET Framework 4.8")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MvcDemo")]
+[assembly: AssemblyProduct("MS Entra POC")]
 [assembly: AssemblyCopyright("Copyright © 2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
