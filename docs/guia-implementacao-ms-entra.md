@@ -99,6 +99,81 @@ Os pacotes da série 5.3.0 possuem vulnerabilidades de severidade moderada repor
 
 ---
 
+## Requisitos para .NET Framework 4.7.2+
+
+Ao utilizar o .NET Framework 4.7.2 ou 4.8 como target, a integração com o Microsoft Entra ID é significativamente simplificada devido ao suporte nativo ao [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard) e à negociação automática de [TLS 1.2](https://learn.microsoft.com/en-us/dotnet/framework/network-programming/tls).
+
+### Versões dos Pacotes Microsoft.IdentityModel
+
+Com o .NET Framework 4.7.2+, é possível utilizar a série **8.x** dos pacotes `Microsoft.IdentityModel.*`, que é a versão mais recente e segura:
+
+| Pacote | Versão Recomendada (4.7.2+) | Observação |
+|--------|-----------------------------|------------|
+| `Microsoft.IdentityModel.Tokens` | 8.x (ex: 8.15.0) | Suporte completo ao net472 |
+| `Microsoft.IdentityModel.Logging` | 8.x (ex: 8.15.0) | Suporte completo ao net472 |
+| `Microsoft.IdentityModel.Protocols` | 8.x (ex: 8.15.0) | Suporte completo ao net472 |
+| `Microsoft.IdentityModel.Protocols.OpenIdConnect` | 8.x (ex: 8.15.0) | Suporte completo ao net472 |
+| `Microsoft.IdentityModel.Abstractions` | 8.x (ex: 8.15.0) | **Disponível apenas na série 8.x** |
+| `System.IdentityModel.Tokens.Jwt` | 8.x (ex: 8.15.0) | Suporte completo ao net472 |
+
+> **Nota**: O pacote `Microsoft.IdentityModel.Abstractions` **é necessário** na série 8.x e será instalado automaticamente como dependência transitiva.
+
+### Binding Redirects no Web.config
+
+Os binding redirects devem apontar para a versão **8.x** instalada (ex: 8.15.0.0):
+
+```xml
+<dependentAssembly>
+    <assemblyIdentity name="Microsoft.IdentityModel.Tokens" publicKeyToken="31bf3856ad364e35" culture="neutral"/>
+    <bindingRedirect oldVersion="0.0.0.0-8.15.0.0" newVersion="8.15.0.0"/>
+</dependentAssembly>
+<dependentAssembly>
+    <assemblyIdentity name="Microsoft.IdentityModel.Logging" publicKeyToken="31bf3856ad364e35" culture="neutral"/>
+    <bindingRedirect oldVersion="0.0.0.0-8.15.0.0" newVersion="8.15.0.0"/>
+</dependentAssembly>
+<dependentAssembly>
+    <assemblyIdentity name="Microsoft.IdentityModel.Abstractions" publicKeyToken="31bf3856ad364e35" culture="neutral"/>
+    <bindingRedirect oldVersion="0.0.0.0-8.15.0.0" newVersion="8.15.0.0"/>
+</dependentAssembly>
+```
+
+> **Dica**: Ajuste os valores `8.15.0.0` para a versão exata instalada via NuGet no seu projeto.
+
+### TLS 1.2 Automático
+
+No .NET Framework 4.7+, o TLS 1.2 é [negociado automaticamente pelo sistema operacional](https://learn.microsoft.com/en-us/dotnet/framework/network-programming/tls). Não é necessário configurar `ServicePointManager.SecurityProtocol` manualmente:
+
+```csharp
+// NÃO necessário no 4.7.2+ (mas inofensivo se presente)
+// ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+```
+
+O `Startup.cs` pode omitir essa configuração, simplificando o código:
+
+```csharp
+public void Configuration(IAppBuilder app)
+{
+    // TLS 1.2 é negociado automaticamente pelo OS no 4.7.2+
+    ConfigureAuth(app);
+}
+```
+
+### Segurança dos Pacotes
+
+A série 8.x dos pacotes `Microsoft.IdentityModel.*` resolve as vulnerabilidades conhecidas da série 5.x ([CVE-2024-21319](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21319)), eliminando a necessidade de mitigações manuais. Além disso, recebe atualizações de segurança ativas da Microsoft.
+
+### Vantagens em Relação ao 4.6.2
+
+| Aspecto | .NET Framework 4.6.2 | .NET Framework 4.7.2+ |
+|---------|----------------------|----------------------|
+| Pacotes IdentityModel | Série 5.3.0 (vulnerável) | Série 8.x (atual e segura) |
+| TLS 1.2 | Configuração manual obrigatória | Automático pelo OS |
+| .NET Standard 2.0 | Suporte parcial com limitações | Suporte nativo completo |
+| `IdentityModel.Abstractions` | Não disponível | Disponível e necessário |
+| Manutenção de dependências | Complexa (conflitos de DLLs) | Simplificada |
+
+---
+
 ## Passo 1: Registrar a Aplicação no Microsoft Entra ID
 
 ### 1.1 Criar o App Registration
