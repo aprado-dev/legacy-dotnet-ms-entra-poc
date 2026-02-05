@@ -25,23 +25,24 @@ Este guia documenta o passo a passo para implementar autenticação SSO com Micr
 
 #### Por que versões abaixo da 4.6.2 não são recomendadas?
 
-A utilização de versões anteriores à 4.6.2 (ex: 4.5, 4.5.2) inviabiliza o uso da biblioteca de autenticação moderna (MSAL.NET), forçando o uso de tecnologias obsoletas:
+A utilização de versões anteriores à 4.6.2 (ex: 4.5, 4.5.2) inviabiliza o uso da biblioteca de autenticação moderna ([MSAL.NET](https://www.nuget.org/packages/microsoft.identity.client/)), forçando o uso de tecnologias obsoletas:
 
-- **Fim do Suporte da ADAL**: Versões antigas dependeriam da Active Directory Authentication Library (ADAL), cujo suporte foi encerrado pela Microsoft em junho de 2023 (End of Life). O uso desta biblioteca em produção constitui uma não conformidade de segurança (High Risk Finding).
-- **Incompatibilidade de TLS**: O Microsoft Entra ID (Azure AD) exige conexões via TLS 1.2. Versões antigas do framework não negociam este protocolo nativamente, exigindo intervenções manuais no código (`ServicePointManager`) que são propensas a falhas humanas e interrupções de serviço.
+- **Fim do Suporte da ADAL**: Versões antigas dependeriam da Active Directory Authentication Library (ADAL), cujo suporte foi [encerrado pela Microsoft em junho de 2023](https://learn.microsoft.com/en-us/entra/identity-platform/msal-migration) (End of Life). O uso desta biblioteca em produção constitui uma não conformidade de segurança (High Risk Finding). [[1]](https://techcommunity.microsoft.com/blog/microsoft-entra-blog/update-your-applications-to-use-microsoft-authentication-library-and-microsoft-g/1257363)
+- **Incompatibilidade de TLS**: O Microsoft Entra ID (Azure AD) [exige conexões via TLS 1.2](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/reference-connect-tls-enforcement). Versões antigas do framework não negociam este protocolo nativamente, exigindo intervenções manuais no código (`ServicePointManager`) que são propensas a falhas humanas e interrupções de serviço. [[2]](https://learn.microsoft.com/en-us/dotnet/framework/network-programming/tls)
+- **Fim de Suporte do .NET**: As versões 4.5.2, 4.6 e 4.6.1 do .NET Framework [atingiram o fim do suporte em 26 de abril de 2022](https://devblogs.microsoft.com/dotnet/net-framework-4-5-2-4-6-4-6-1-will-reach-end-of-support-on-april-26-2022/), não recebendo mais correções de segurança.
 
 #### Por que a versão 4.6.2 é o "Mínimo Suportado" (com ressalvas)?
 
-A versão 4.6.2 é a base mínima para executar a biblioteca atual `Microsoft.Identity.Client` (MSAL). No entanto, ela apresenta desafios de manutenção:
+A versão 4.6.2 é a [base mínima para executar a biblioteca atual `Microsoft.Identity.Client` (MSAL)](https://www.nuget.org/packages/microsoft.identity.client/). No entanto, ela apresenta desafios de manutenção:
 
-- **Vulnerabilidades de Dependência**: O ecossistema de pacotes NuGet compatível com 4.6.2 frequentemente alerta para vulnerabilidades nas bibliotecas de tokens (`System.IdentityModel.Tokens.Jwt` série 5.x). A mitigação exige o forçamento manual de pacotes para versões mais recentes (série 6.x), aumentando a complexidade de gestão de dependências.
+- **Vulnerabilidades de Dependência**: O ecossistema de pacotes NuGet compatível com 4.6.2 frequentemente alerta para vulnerabilidades nas bibliotecas de tokens (`System.IdentityModel.Tokens.Jwt` série 5.x), como a [CVE-2024-21319](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21319) (Denial of Service, CVSS 6.8). A mitigação exige o forçamento manual de pacotes para versões mais recentes (série 6.x), aumentando a complexidade de gestão de dependências. [[3]](https://github.com/advisories/GHSA-59j7-ghrg-fj52)
 
 #### Por que a versão 4.7.2+ é a Recomendada?
 
 A atualização para o .NET Framework 4.7.2 ou 4.8 elimina dívidas técnicas críticas:
 
-- **Suporte Nativo ao .NET Standard 2.0**: Permite o uso transparente das versões mais seguras e recentes das bibliotecas de identidade e criptografia, sem conflitos de DLLs.
-- **Criptografia Robusta**: O sistema operacional gerencia a negociação de protocolos de segurança (TLS 1.2/1.3) automaticamente, garantindo conformidade imediata com as políticas de segurança do Microsoft Entra ID.
+- **Suporte Nativo ao [.NET Standard 2.0](https://learn.microsoft.com/en-us/dotnet/standard/net-standard)**: Permite o uso transparente das versões mais seguras e recentes das bibliotecas de identidade e criptografia, sem conflitos de DLLs. O .NET Framework 4.7.2 é a [versão mínima recomendada pela Microsoft](https://learn.microsoft.com/en-us/dotnet/standard/net-standard#net-framework-compatibility-mode) para consumir bibliotecas .NET Standard 2.0 de forma confiável.
+- **Criptografia Robusta**: O sistema operacional gerencia a negociação de protocolos de segurança (TLS 1.2/1.3) automaticamente, garantindo conformidade imediata com as políticas de segurança do Microsoft Entra ID. [[4]](https://learn.microsoft.com/en-us/dotnet/framework/network-programming/tls)
 
 ---
 
@@ -90,7 +91,7 @@ ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
 ### Vulnerabilidades Conhecidas
 
-Os pacotes da série 5.3.0 possuem vulnerabilidades de severidade moderada reportadas pelo NuGet (`GHSA-59j7-ghrg-fj52`). Para ambientes de produção, considere:
+Os pacotes da série 5.3.0 possuem vulnerabilidades de severidade moderada reportadas pelo NuGet ([GHSA-59j7-ghrg-fj52](https://github.com/advisories/GHSA-59j7-ghrg-fj52) / [CVE-2024-21319](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21319)). Para ambientes de produção, considere:
 
 1. Migrar para .NET Framework 4.7.2+ para utilizar pacotes da série 6.x/8.x
 2. Avaliar o risco da vulnerabilidade no contexto da sua aplicação
@@ -414,6 +415,21 @@ public static void RegisterGlobalFilters(GlobalFilterCollection filters)
 
 ## Referências
 
+### Documentação Geral
+
 - [Documentação Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/)
 - [OWIN OpenID Connect Middleware](https://learn.microsoft.com/en-us/aspnet/aspnet/overview/owin-and-katana/)
 - [App Registration no Azure](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app)
+
+### Segurança e Compatibilidade de Versões
+
+- **[1]** [Migração de ADAL para MSAL - Anúncio oficial do fim do suporte da ADAL](https://techcommunity.microsoft.com/blog/microsoft-entra-blog/update-your-applications-to-use-microsoft-authentication-library-and-microsoft-g/1257363) — Microsoft Entra Blog
+- **[1]** [Guia de Migração ADAL → MSAL](https://learn.microsoft.com/en-us/entra/identity-platform/msal-migration) — Microsoft Learn
+- **[2]** [Transport Layer Security (TLS) best practices with .NET Framework](https://learn.microsoft.com/en-us/dotnet/framework/network-programming/tls) — Microsoft Learn
+- **[2]** [TLS 1.2 enforcement for Microsoft Entra Connect](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/reference-connect-tls-enforcement) — Microsoft Learn
+- **[3]** [CVE-2024-21319: Microsoft Identity Denial of Service Vulnerability](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-21319) — MSRC (CVSS 6.8)
+- **[3]** [GHSA-59j7-ghrg-fj52: .NET Denial of Service Vulnerability](https://github.com/advisories/GHSA-59j7-ghrg-fj52) — GitHub Advisory Database
+- **[4]** [.NET Standard - Tabela de compatibilidade](https://learn.microsoft.com/en-us/dotnet/standard/net-standard) — Microsoft Learn
+- [Microsoft.Identity.Client (MSAL.NET) - NuGet](https://www.nuget.org/packages/microsoft.identity.client/) — Frameworks suportados: net462, net472, netstandard2.0, net8.0
+- [.NET Framework 4.5.2, 4.6, 4.6.1 End of Support (Abril 2022)](https://devblogs.microsoft.com/dotnet/net-framework-4-5-2-4-6-4-6-1-will-reach-end-of-support-on-april-26-2022/) — .NET Blog
+- [Política oficial de suporte do .NET Framework](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-framework) — Microsoft
