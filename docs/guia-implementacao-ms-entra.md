@@ -281,7 +281,7 @@ namespace SeuNamespace
 
         public void Configuration(IAppBuilder app)
         {
-            // Força TLS 1.2 (obrigatório para Microsoft Entra ID)
+            // Força TLS 1.2 (necessário para Microsoft Entra ID)
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             ConfigureAuth(app);
@@ -352,7 +352,7 @@ namespace SeuNamespace.Controllers
             if (!Request.IsAuthenticated)
             {
                 HttpContext.GetOwinContext().Authentication.Challenge(
-                    new AuthenticationProperties { RedirectUri = "/" },
+                    new AuthenticationProperties { RedirectUri = "/", IsPersistent = true },
                     OpenIdConnectAuthenticationDefaults.AuthenticationType);
             }
         }
@@ -373,19 +373,19 @@ namespace SeuNamespace.Controllers
 
 ### 6.1 No Layout (_Layout.cshtml)
 
-Adicione a verificação de autenticação:
+Adicione a verificação de autenticação no header. Quando autenticado, exiba o nome do usuário e o botão de logout:
 
 ```html
 @if (Request.IsAuthenticated)
 {
-    <span>@User.Identity.Name</span>
-    <a href="@Url.Action("SignOut", "Account")">Sair</a>
-}
-else
-{
-    <a href="@Url.Action("SignIn", "Account")">Entrar</a>
+    <nav class="user-nav">
+        <span class="user-name">@User.Identity.Name</span>
+        <a href="@Url.Action("SignOut", "Account")" class="btn-logout">Sair</a>
+    </nav>
 }
 ```
+
+> **Nota**: O botão de login ("Entrar") pode ser posicionado na view principal (ex: `Index.cshtml`) ao invés do layout, conforme a necessidade da sua aplicação.
 
 ### 6.2 Exibir Claims do Usuário (opcional)
 
