@@ -245,6 +245,7 @@ Adicione as seguintes chaves na seção `<appSettings>`:
     <add key="ida:ClientSecret" value="SEU_CLIENT_SECRET" />
     <add key="ida:RedirectUri" value="https://localhost:44300/signin-oidc" />
     <add key="ida:PostLogoutRedirectUri" value="https://localhost:44300/" />
+    <add key="owin:AppStartup" value="SeuNamespace.Startup" />
 </appSettings>
 ```
 
@@ -352,7 +353,7 @@ namespace SeuNamespace.Controllers
             if (!Request.IsAuthenticated)
             {
                 HttpContext.GetOwinContext().Authentication.Challenge(
-                    new AuthenticationProperties { RedirectUri = "/" },
+                    new AuthenticationProperties { RedirectUri = "/", IsPersistent = true },
                     OpenIdConnectAuthenticationDefaults.AuthenticationType);
             }
         }
@@ -373,19 +374,19 @@ namespace SeuNamespace.Controllers
 
 ### 6.1 No Layout (_Layout.cshtml)
 
-Adicione a verificação de autenticação:
+Adicione a verificação de autenticação no header. Quando autenticado, exibe o nome do usuário e o botão de logout:
 
 ```html
 @if (Request.IsAuthenticated)
 {
-    <span>@User.Identity.Name</span>
-    <a href="@Url.Action("SignOut", "Account")">Sair</a>
-}
-else
-{
-    <a href="@Url.Action("SignIn", "Account")">Entrar</a>
+    <nav class="user-nav">
+        <span class="user-name">@User.Identity.Name</span>
+        <a href="@Url.Action("SignOut", "Account")" class="btn-logout">Sair</a>
+    </nav>
 }
 ```
+
+> **Nota**: O link de login ("Entrar") pode ser posicionado na view principal (ex: `Index.cshtml`) em vez do layout, conforme a necessidade da aplicação.
 
 ### 6.2 Exibir Claims do Usuário (opcional)
 
