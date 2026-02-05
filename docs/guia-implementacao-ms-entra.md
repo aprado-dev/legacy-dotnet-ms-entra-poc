@@ -23,7 +23,7 @@ Este guia documenta o passo a passo para implementar autenticação SSO com Micr
 
 ### Justificativa Técnica das Decisões
 
-#### Por que versões abaixo da 4.6.2 são proibidas?
+#### Por que versões abaixo da 4.6.2 não são recomendadas?
 
 A utilização de versões anteriores à 4.6.2 (ex: 4.5, 4.5.2) inviabiliza o uso da biblioteca de autenticação moderna (MSAL.NET), forçando o uso de tecnologias obsoletas:
 
